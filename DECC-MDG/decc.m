@@ -41,7 +41,7 @@ function [bestval] = decc(fname, func_num, dim, Lbound, Ubound, popsize, itermax
 
     % the initial crossover rate for SaNSDE
     group = {};
-    ccm = 0.5;%CRm½»²æÂÊµÄ¸ßË¹·Ö²¼Ëæ»úº¯ÊıµÄÆ½¾ùÊı£¬Ã¿25´ú¸üĞÂÒ»´Î
+    ccm = 0.5;%CRmäº¤å‰ç‡çš„é«˜æ–¯åˆ†å¸ƒéšæœºå‡½æ•°çš„å¹³å‡æ•°ï¼Œæ¯25ä»£æ›´æ–°ä¸€æ¬¡
     sansde_iter = 1;
     Cycle = 0;
     iter = 0;
@@ -49,8 +49,8 @@ function [bestval] = decc(fname, func_num, dim, Lbound, Ubound, popsize, itermax
 
     FE = 0;
     
-    group = diff_grouping(func_num,problem);%·µ»Ø²î·Ö·Ö×éµÄ·Ö×éÇé¿ö
-    group_num = size(group, 2);%·µ»Ø·Ö×éÊı
+    group = diff_grouping(func_num,problem);%è¿”å›å·®åˆ†åˆ†ç»„çš„åˆ†ç»„æƒ…å†µ
+    group_num = size(group, 2);%è¿”å›åˆ†ç»„æ•°
         
     
     display = 0;
@@ -67,18 +67,18 @@ function [bestval] = decc(fname, func_num, dim, Lbound, Ubound, popsize, itermax
                 break;
             end
 
-            dim_index = group{i};%·µ»ØµÚi¸ö×Ó×é¼şµÄÎ¬¶È£¨¾ö²ß±äÁ¿£©Ë÷Òı
+            dim_index = group{i};%è¿”å›ç¬¬iä¸ªå­ç»„ä»¶çš„ç»´åº¦ï¼ˆå†³ç­–å˜é‡ï¼‰ç´¢å¼•
             subpop = pop(:, dim_index); 
             subLbound = Lbound(:, dim_index);        
             subUbound = Ubound(:, dim_index);
 
-                [subpopnew, bestmemnew, bestvalnew, tracerst, ccm] = sansde(fname, func_num, dim_index, subpop, bestmem, bestval, subLbound, subUbound, oneitermax, ccm,Cycle);
+                [subpopnew, bestmemnew, bestvalnew, tracerst, ccm] = sansde(fname, func_num, dim_index, subpop, bestmem, bestval, subLbound, subUbound, oneitermax, ccm);
 
                 FE = FE + popsize;
 
                 iter = iter + oneitermax;
                 
-                %Êä³ö¸ñÊ½ÎªÊµÊı£¬¿ÆÑ§¼ÆËã·¨ĞÎÊ½
+                %è¾“å‡ºæ ¼å¼ä¸ºå®æ•°ï¼Œç§‘å­¦è®¡ç®—æ³•å½¢å¼
                 fprintf(fid, '%e\n', tracerst); 
 
                 
