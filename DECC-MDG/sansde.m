@@ -5,7 +5,7 @@
 % Neightborhood Search", in Proceedings of the 2008 IEEE Congress on 
 % Evolutionary Computation (CEC2008), Hongkong, China, 2008, pp. 1110-1116.
 
-function [popnew, bestmemnew, bestvalnew, tracerst, ccm] = sansde(fname, func_num, dim_index, pop, bestmem, bestval, Lbound, Ubound, itermax, ccm,cycle);
+function [popnew, bestmemnew, bestvalnew, tracerst, ccm] = sansde(fname, func_num, dim_index, pop, bestmem, bestval, Lbound, Ubound, itermax, ccm);
 
     [popsize, dim] = size(pop);
     NP = popsize;
@@ -13,7 +13,6 @@ function [popnew, bestmemnew, bestvalnew, tracerst, ccm] = sansde(fname, func_nu
     tracerst = [];
 
     F = zeros(NP,1);
-    %cc=zeros(NP*3, 1);
 
     linkp = 0.5;
     l1 = 1;l2 = 1;nl1 = 1;nl2 = 1;
@@ -43,10 +42,10 @@ function [popnew, bestmemnew, bestvalnew, tracerst, ccm] = sansde(fname, func_nu
 
             cc_rec = [];
             f_rec = [];
-    %½«³ıÁËÒª¸Ä½øµÄ×Ó×é¼şÖ®ÍâµÄÆäËû±äÁ¿µÄ¸öÌå»»³Ébest¸öÌåËù¶ÔÓ¦µÄ´ú±íĞÔÔªËØ
+    %å°†é™¤äº†è¦æ”¹è¿›çš„å­ç»„ä»¶ä¹‹å¤–çš„å…¶ä»–å˜é‡çš„ä¸ªä½“æ¢æˆbestä¸ªä½“æ‰€å¯¹åº”çš„ä»£è¡¨æ€§å…ƒç´ 
     gpop = ones(popsize, 1) * bestmem;
     gpop(:, dim_index) = pop;
-    %¸üĞÂbest
+    %æ›´æ–°best
     val = feval(fname, gpop, func_num);
     [best, ibest] = min(val);
     subbestmem = pop(ibest, :);
@@ -57,16 +56,15 @@ function [popnew, bestmemnew, bestvalnew, tracerst, ccm] = sansde(fname, func_nu
     end
 
     iter = 0;
-    %iter_c=cycle;
     while iter < itermax
         popold = pop;                   % save the old population
         
-        ind = randperm(4);              % index pointer array·µ»ØÒ»ĞĞ´Ó1µ½4µÄËæ»úÅÅÁĞµÄÕûÊı
+        ind = randperm(4);              % index pointer arrayè¿”å›ä¸€è¡Œä»1åˆ°4çš„éšæœºæ’åˆ—çš„æ•´æ•°
         
         a1  = randperm(NP);             % shuffle locations of vectors
         rt = rem(rot+ind(1),NP);        % rotate indices by ind(1) positions
         a2  = a1(rt+1);                 % rotate vector locations
-        rt = rem(rot+ind(2),NP);        %remÈ¡Óà
+        rt = rem(rot+ind(2),NP);        %remå–ä½™
         a3  = a2(rt+1);                
         rt = rem(rot+ind(3),NP);
         a4  = a3(rt+1);               
@@ -80,7 +78,7 @@ function [popnew, bestmemnew, bestvalnew, tracerst, ccm] = sansde(fname, func_nu
         pm5 = popold(a5,:);             % shuffled population 5
         
         bm = ones(NP, 1) * subbestmem;
-        %Ã¿25´ú¸üĞÂÒ»´ÎCRm(ccm)
+        %æ¯25ä»£æ›´æ–°ä¸€æ¬¡CRm(ccm)
         if rem(iter,24)==0
             if (iter~=0) && (~isempty(cc_rec))
                 ccm = sum(f_rec.*cc_rec)/sum(f_rec);%CRm
@@ -88,14 +86,14 @@ function [popnew, bestmemnew, bestvalnew, tracerst, ccm] = sansde(fname, func_nu
             cc_rec = [];
             f_rec = [];
         end
-        %Ã¿5´ú¸üĞÂÒ»´Î½»²æÂÊcc,NPÎ¬µÄ¾ØÕó
+        %æ¯5ä»£æ›´æ–°ä¸€æ¬¡äº¤å‰ç‡cc,NPç»´çš„çŸ©é˜µ
 
         if rem(iter,5)==0
-            cc = normrnd(ccm, 0.1, NP*3, 1);%²úÉúĞĞ(NP*3)*ÁĞ1µÄÕıÌ¬·Ö²¼Ëæ»úÊı¾ØÕó
+            cc = normrnd(ccm, 0.1, NP*3, 1);%äº§ç”Ÿè¡Œ(NP*3)*åˆ—1çš„æ­£æ€åˆ†å¸ƒéšæœºæ•°çŸ©é˜µ
             index = find((cc < 1) & (cc > 0));
             cc = cc(index(1:NP));
         end
-        %±ÈÀıÒò×ÓF×ÔÊÊÓ¦¸üĞÂ
+        %æ¯”ä¾‹å› å­Fè‡ªé€‚åº”æ›´æ–°
         fst1 = (rand(NP,1) <= fp);
         fst2 = 1-fst1;
 
@@ -111,12 +109,12 @@ function [popnew, bestmemnew, bestvalnew, tracerst, ccm] = sansde(fname, func_nu
         F = abs(F);
         
         % all random numbers < CR are 1, 0 otherwise
-        aa = rand(NP,D) < repmat(cc,1,D);%repmat²úÉúÎ¬¶ÈÎª[size(cc,1)*1, size(cc,2)*D]¼´[NP,D]µÄ¾ØÕó,Ã¿Ò»ĞĞµÄÔªËØ¾ùÎªcc[i]
-        index = find(sum(aa') == 0);%aa'×ªÖÃ£¬sumÃ¿Ò»ÁĞÔªËØÇóºÍµÄ½á¹û£¬½á¹ûÎªĞĞÏòÁ¿
+        aa = rand(NP,D) < repmat(cc,1,D);%repmatäº§ç”Ÿç»´åº¦ä¸º[size(cc,1)*1, size(cc,2)*D]å³[NP,D]çš„çŸ©é˜µ,æ¯ä¸€è¡Œçš„å…ƒç´ å‡ä¸ºcc[i]
+        index = find(sum(aa') == 0);%aa'è½¬ç½®ï¼Œsumæ¯ä¸€åˆ—å…ƒç´ æ±‚å’Œçš„ç»“æœï¼Œç»“æœä¸ºè¡Œå‘é‡
         tmpsize = size(index, 2);
         for k=1:tmpsize
-            bb = ceil(D*rand);%ÏòÉÏÈ¡Õû
-            aa(index(k), bb) = 1;%±£Ö¤Ã¿¸ö¸öÌå¶¼½øĞĞÁË½»²æ£¬ui²»ÖØ¸´xi
+            bb = ceil(D*rand);%å‘ä¸Šå–æ•´
+            aa(index(k), bb) = 1;%ä¿è¯æ¯ä¸ªä¸ªä½“éƒ½è¿›è¡Œäº†äº¤å‰ï¼Œuiä¸é‡å¤xi
         end
             
         mui=aa;
